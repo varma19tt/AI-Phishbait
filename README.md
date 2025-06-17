@@ -15,6 +15,13 @@ AI-PhishBait is an advanced red teaming tool that generates hyper-personalized p
 - **Web Interface**: User-friendly dashboard for generating and managing campaigns
 - **API Support**: REST API for integration with other security tools
 
+##Screenshots
+   ![Description of Image](screenshots/1.jpeg)
+   ![Description of Image](screenshots/2.jpeg)
+   ![Description of Image](screenshots/3.jpeg)
+   ![Description of Image](screenshots/4.jpeg)
+
+
 ## Technical Stack
 
 ### Core Components
