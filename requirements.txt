@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+gpt4all
+playwright
+python-multipart
+beautifulsoup4
+scrapy
+slowapi
+pydantic

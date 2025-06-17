@@ -1,0 +1,201 @@
+<!-- templates/dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-PhishBait Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <header class="bg-gradient-to-r from-blue-800 to-indigo-900 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <i class="fas fa-fish text-2xl mr-3"></i>
+                <h1 class="text-2xl font-bold">AI-PhishBait <span class="text-blue-300">Pro</span></h1>
+            </div>
+            <div class="flex items-center">
+                <div class="mr-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm">
+                    <i class="fas fa-coins mr-1"></i>Credits: <span id="credit-counter">1000</span>
+                </div>
+                <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">DU</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 py-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">High-Performance Phishing Simulation</h2>
+            <p class="text-gray-600">Generate convincing phishing emails in seconds</p>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <form id="generateForm" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Platform</label>
+                        <div class="flex space-x-4">
+                            <label class="flex items-center">
+                                <input type="radio" name="platform" value="linkedin" checked class="mr-2">
+                                <i class="fab fa-linkedin text-blue-700 mr-1"></i> LinkedIn
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="platform" value="twitter" class="mr-2">
+                                <i class="fab fa-twitter text-blue-400 mr-1"></i> Twitter
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="template" class="block text-sm font-medium text-gray-700 mb-1">Template</label>
+                        <select id="template" name="template" class="w-full p-2 border rounded">
+                            <option value="social_engineering">Social Engineering</option>
+                            <option value="job_offer">Job Offer</option>
+                            <option value="security_alert">Security Alert</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="url" class="block text-sm font-medium text-gray-700 mb-1">Profile URL</label>
+                    <input type="url" id="url" name="url" required 
+                        placeholder="https://linkedin.com/in/example" 
+                        class="w-full p-2 border rounded">
+                </div>
+                
+                <div>
+                    <label for="tactic" class="block text-sm font-medium text-gray-700 mb-1">Tactic</label>
+                    <select id="tactic" name="tactic" class="w-full p-2 border rounded">
+                        <option value="authority">Authority</option>
+                        <option value="urgency">Urgency</option>
+                        <option value="familiarity">Familiarity</option>
+                        <option value="scarcity">Scarcity</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium">
+                    <i class="fas fa-bolt mr-2"></i> Generate Email
+                </button>
+            </form>
+        </div>
+        
+        <div id="result" class="bg-white rounded-xl shadow-lg p-6 hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Generated Email</h3>
+                <div class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">
+                    Credits: <span id="credits-remaining">0</span>
+                </div>
+            </div>
+            
+            <div class="mb-4 p-3 bg-gray-50 rounded">
+                <p class="font-medium" id="target-name"></p>
+                <p class="text-sm text-gray-600" id="target-info"></p>
+            </div>
+            
+            <div class="p-4 bg-gray-50 rounded border border-gray-200">
+                <pre id="email-content" class="whitespace-pre-wrap"></pre>
+            </div>
+            
+            <div class="mt-4 flex space-x-3">
+                <button id="copy-btn" class="flex-1 bg-gray-200 hover:bg-gray-300 py-2 rounded">
+                    <i class="far fa-copy mr-1"></i> Copy
+                </button>
+                <button id="new-btn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded">
+                    <i class="fas fa-redo mr-1"></i> New
+                </button>
+            </div>
+        </div>
+        
+        <div id="loading" class="text-center py-12 hidden">
+            <div class="inline-block animate-pulse rounded-full h-16 w-16 bg-blue-500 mb-4"></div>
+            <p class="text-gray-600">Generating your phishing email...</p>
+            <p class="text-sm text-gray-500 mt-2">This usually takes 5-15 seconds</p>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-gray-400 py-6 mt-12">
+        <div class="max-w-4xl mx-auto px-4 text-center text-sm">
+            <p>&copy; 2023 AI-PhishBait Pro. For authorized security testing only.</p>
+        </div>
+    </footer>
+
+    <script>
+        const form = document.getElementById('generateForm');
+        const result = document.getElementById('result');
+        const loading = document.getElementById('loading');
+        const emailContent = document.getElementById('email-content');
+        const targetName = document.getElementById('target-name');
+        const targetInfo = document.getElementById('target-info');
+        const creditsRemaining = document.getElementById('credits-remaining');
+        const creditCounter = document.getElementById('credit-counter');
+        const copyBtn = document.getElementById('copy-btn');
+        const newBtn = document.getElementById('new-btn');
+        
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                profile_url: document.getElementById('url').value,
+                platform: document.querySelector('input[name="platform"]:checked').value,
+                template_type: document.getElementById('template').value,
+                social_engineering_tactic: document.getElementById('tactic').value
+            };
+            
+            // Show loading, hide results
+            loading.classList.remove('hidden');
+            result.classList.add('hidden');
+            
+            try {
+                const start = Date.now();
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Request failed');
+                }
+                
+                // Display results
+                emailContent.textContent = data.email;
+                targetName.textContent = data.profile.name;
+                targetInfo.textContent = data.profile.headline;
+                creditsRemaining.textContent = data.credits_remaining;
+                creditCounter.textContent = data.credits_remaining;
+                
+                // Show results
+                result.classList.remove('hidden');
+                loading.classList.add('hidden');
+                
+                console.log(`Request completed in ${Date.now() - start}ms`);
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+                loading.classList.add('hidden');
+            }
+        });
+        
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(emailContent.textContent);
+            copyBtn.innerHTML = '<i class="fas fa-check mr-1"></i> Copied!';
+            setTimeout(() => {
+                copyBtn.innerHTML = '<i class="far fa-copy mr-1"></i> Copy';
+            }, 2000);
+        });
+        
+        newBtn.addEventListener('click', () => {
+            result.classList.add('hidden');
+            form.reset();
+        });
+    </script>
+</body>
+</html>

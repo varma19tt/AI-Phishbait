@@ -1,0 +1,563 @@
+<!-- templates/generate.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-PhishBait Pro - Generate</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .psych-tactics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1rem;
+        }
+        .tactic-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid #e5e7eb;
+        }
+        .tactic-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .tactic-card.active {
+            border-color: #3B82F6;
+            background-color: #dbeafe;
+        }
+        .progress-bar {
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: #3B82F6;
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-800 to-indigo-900 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <i class="fas fa-fish text-2xl mr-3"></i>
+                <h1 class="text-2xl font-bold">AI-PhishBait <span class="text-blue-300">Pro</span></h1>
+            </div>
+            <nav class="hidden md:flex space-x-6">
+                <a href="/" class="font-medium hover:text-blue-200 transition">
+                    <i class="fas fa-home mr-2"></i>Dashboard
+                </a>
+                <a href="/generate" class="font-medium text-blue-300 border-b-2 border-blue-300 pb-1">
+                    <i class="fas fa-magic mr-2"></i>Generate
+                </a>
+                <a href="#" class="font-medium hover:text-blue-200 transition">
+                    <i class="fas fa-project-diagram mr-2"></i>Campaigns
+                </a>
+                <a href="#" class="font-medium hover:text-blue-200 transition">
+                    <i class="fas fa-chart-bar mr-2"></i>Analytics
+                </a>
+            </nav>
+            <div class="flex items-center">
+                <div class="mr-4">
+                    <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">
+                        <i class="fas fa-coins mr-1"></i>Credits: <span id="credit-counter">1000</span>
+                    </span>
+                </div>
+                <div class="relative group">
+                    <div class="flex items-center cursor-pointer">
+                        <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">DU</div>
+                        <span class="ml-2 hidden md:inline">Demo User</span>
+                        <i class="fas fa-chevron-down ml-1 text-sm"></i>
+                    </div>
+                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden group-hover:block z-10">
+                        <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                            <i class="fas fa-user mr-2"></i>Profile
+                        </a>
+                        <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                            <i class="fas fa-cog mr-2"></i>Settings
+                        </a>
+                        <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-800">Generate Phishing Email</h2>
+                <p class="text-gray-600 mt-2">Create hyper-personalized phishing emails using AI and social engineering</p>
+            </div>
+            <button id="newButton" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2.5 px-4 rounded-lg hidden">
+                <i class="fas fa-redo mr-2"></i> New Generation
+            </button>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Generation Form -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+                    <form id="generateForm" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Platform Selection -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Platform <span class="text-red-500">*</span>
+                                </label>
+                                <div class="flex space-x-4">
+                                    <div class="flex items-center">
+                                        <input type="radio" id="linkedin" name="platform" value="linkedin" class="mr-2" checked>
+                                        <label for="linkedin" class="flex items-center">
+                                            <i class="fab fa-linkedin text-blue-700 mr-1"></i> LinkedIn
+                                        </label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="radio" id="twitter" name="platform" value="twitter" class="mr-2">
+                                        <label for="twitter" class="flex items-center">
+                                            <i class="fab fa-twitter text-blue-400 mr-1"></i> Twitter
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Template Selection -->
+                            <div>
+                                <label for="template_type" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Email Template
+                                </label>
+                                <select 
+                                    id="template_type" 
+                                    name="template_type"
+                                    class="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                                >
+                                    <option value="social_engineering" selected>Advanced Social Engineering</option>
+                                    <option value="job_offer">Job Offer</option>
+                                    <option value="security_alert">Security Alert</option>
+                                    <option value="document_share">Document Share</option>
+                                    <option value="password_reset">Password Reset</option>
+                                    <option value="invoice">Invoice Payment</option>
+                                    <option value="default">Personalized Phishing</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Profile URL -->
+                        <div>
+                            <label for="profile_url" class="block text-sm font-medium text-gray-700 mb-2">
+                                Profile URL <span class="text-red-500">*</span>
+                            </label>
+                            <input 
+                                type="url" 
+                                id="profile_url" 
+                                name="profile_url"
+                                required
+                                placeholder="https://www.linkedin.com/in/example"
+                                class="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                            >
+                        </div>
+                        
+                        <!-- Social Engineering Tactics -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Psychological Tactics
+                            </label>
+                            <div class="psych-tactics-grid">
+                                <div class="tactic-card active p-4 rounded-lg" data-tactic="authority">
+                                    <h3 class="font-bold text-gray-800 mb-1">
+                                        <i class="fas fa-crown text-yellow-500 mr-2"></i>Authority
+                                    </h3>
+                                    <p class="text-sm text-gray-600">Exploit respect for authority figures</p>
+                                </div>
+                                <div class="tactic-card p-4 rounded-lg" data-tactic="urgency">
+                                    <h3 class="font-bold text-gray-800 mb-1">
+                                        <i class="fas fa-clock text-red-500 mr-2"></i>Urgency
+                                    </h3>
+                                    <p class="text-sm text-gray-600">Create time-sensitive scenarios</p>
+                                </div>
+                                <div class="tactic-card p-4 rounded-lg" data-tactic="familiarity">
+                                    <h3 class="font-bold text-gray-800 mb-1">
+                                        <i class="fas fa-handshake text-blue-500 mr-2"></i>Familiarity
+                                    </h3>
+                                    <p class="text-sm text-gray-600">Mimic trusted relationships</p>
+                                </div>
+                                <div class="tactic-card p-4 rounded-lg" data-tactic="scarcity">
+                                    <h3 class="font-bold text-gray-800 mb-1">
+                                        <i class="fas fa-ticket text-purple-500 mr-2"></i>Scarcity
+                                    </h3>
+                                    <p class="text-sm text-gray-600">Use limited availability</p>
+                                </div>
+                            </div>
+                            <input type="hidden" id="social_engineering_tactic" name="social_engineering_tactic" value="authority">
+                        </div>
+                        
+                        <!-- Custom Prompt -->
+                        <div>
+                            <label for="custom_prompt" class="block text-sm font-medium text-gray-700 mb-2">
+                                Custom Instructions
+                            </label>
+                            <textarea 
+                                id="custom_prompt" 
+                                name="custom_prompt"
+                                rows="4"
+                                placeholder="Specify exact requirements, tone, or key points to include..."
+                                class="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                            ></textarea>
+                        </div>
+                        
+                        <!-- API Key -->
+                        <div>
+                            <label for="api_key" class="block text-sm font-medium text-gray-700 mb-2">
+                                API Key
+                            </label>
+                            <input 
+                                type="text" 
+                                id="api_key" 
+                                name="api_key"
+                                value="demo_key"
+                                class="w-full px-3 py-2.5 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                            >
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <button 
+                            type="submit"
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition flex items-center justify-center"
+                        >
+                            <i class="fas fa-bolt mr-2"></i>
+                            Generate Advanced Phishing Email
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Results Section -->
+                <div id="resultContainer" class="bg-white rounded-xl shadow-md p-6 hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-gray-800">Generated Email</h3>
+                        <div id="creditsDisplay" class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                            Credits remaining: <span id="creditsCount" class="font-bold">0</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Performance Metrics -->
+                    <div class="grid grid-cols-3 gap-4 mb-6">
+                        <div class="bg-gray-50 p-3 rounded-lg text-center">
+                            <p class="text-sm text-gray-600">Scrape Time</p>
+                            <p class="font-bold text-gray-800" id="scrapeTime">0.00s</p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg text-center">
+                            <p class="text-sm text-gray-600">Generation Time</p>
+                            <p class="font-bold text-gray-800" id="genTime">0.00s</p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg text-center">
+                            <p class="text-sm text-gray-600">Total Time</p>
+                            <p class="font-bold text-gray-800" id="totalTime">0.00s</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Info -->
+                    <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h4 class="font-bold text-gray-700 mb-1">Target Profile</h4>
+                                <p class="text-sm text-gray-600">Platform: <span id="targetPlatform" class="font-medium">LinkedIn</span></p>
+                            </div>
+                            <span id="tacticUsed" class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">Authority</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-xs text-gray-500">Name</p>
+                                <p id="targetName" class="font-medium text-gray-800">-</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500">Position</p>
+                                <p id="targetHeadline" class="font-medium text-gray-800">-</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Email Content -->
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-3">
+                            <h4 class="font-bold text-gray-700">Email Content</h4>
+                            <div class="flex space-x-2">
+                                <button id="copyButton" class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
+                                    <i class="far fa-copy mr-1"></i> Copy
+                                </button>
+                                <button id="downloadButton" class="text-gray-700 hover:text-gray-900 text-sm font-medium flex items-center">
+                                    <i class="fas fa-download mr-1"></i> Download
+                                </button>
+                            </div>
+                        </div>
+                        <div id="emailContent" class="p-4 bg-gray-50 rounded-lg border border-gray-200 whitespace-pre-line font-mono text-sm max-h-96 overflow-y-auto"></div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="flex space-x-4">
+                        <button 
+                            id="saveButton"
+                            class="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 px-4 rounded-lg transition flex items-center justify-center"
+                        >
+                            <i class="fas fa-save mr-2"></i> Save to Campaign
+                        </button>
+                        <button 
+                            id="analyzeButton"
+                            class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-4 rounded-lg transition flex items-center justify-center"
+                        >
+                            <i class="fas fa-chart-line mr-2"></i> Analyze Effectiveness
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tips and Guidance -->
+            <div>
+                <div class="bg-white rounded-xl shadow-md p-6 sticky top-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>Pro Tips
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div class="p-4 bg-blue-50 rounded-lg">
+                            <h4 class="font-bold text-blue-800 mb-2">Optimize for Success</h4>
+                            <p class="text-sm text-blue-700">Reference specific details from the target's profile to increase credibility and engagement.</p>
+                        </div>
+                        
+                        <div class="p-4 bg-green-50 rounded-lg">
+                            <h4 class="font-bold text-green-800 mb-2">Psychological Tactics</h4>
+                            <p class="text-sm text-green-700">Combine urgency with authority for maximum effectiveness in executive targeting.</p>
+                        </div>
+                        
+                        <div class="p-4 bg-purple-50 rounded-lg">
+                            <h4 class="font-bold text-purple-800 mb-2">Avoid Detection</h4>
+                            <p class="text-sm text-purple-700">Add natural imperfections like minor typos or colloquial language to bypass AI detection systems.</p>
+                        </div>
+                        
+                        <div class="p-4 bg-yellow-50 rounded-lg">
+                            <h4 class="font-bold text-yellow-800 mb-2">Template Selection</h4>
+                            <p class="text-sm text-yellow-700">Job offer templates work best for recruiting staff, while security alerts are effective for IT personnel.</p>
+                        </div>
+                        
+                        <div class="p-4 bg-red-50 rounded-lg">
+                            <h4 class="font-bold text-red-800 mb-2">Ethical Use</h4>
+                            <p class="text-sm text-red-700">Always obtain proper authorization before testing. Unauthorized phishing is illegal.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading Indicator -->
+    <div id="loading" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50">
+        <div class="bg-white p-8 rounded-xl max-w-md w-full text-center">
+            <div class="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-600 mb-6"></div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Crafting Your Social Engineering Masterpiece</h3>
+            <p class="text-gray-600 mb-4">Analyzing profile and applying psychological tactics...</p>
+            
+            <div class="relative pt-1">
+                <div class="flex mb-2 items-center justify-between">
+                    <div>
+                        <span class="text-xs font-semibold inline-block text-blue-600">Progress</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs font-semibold inline-block text-blue-600">
+                            <span id="progressPercent">0</span>%
+                        </span>
+                    </div>
+                </div>
+                <div class="progress-bar overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200">
+                    <div id="progressFill" class="progress-fill w-0"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-400 py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="mb-4">
+                <h3 class="text-lg font-bold text-white mb-2">AI-PhishBait Pro</h3>
+                <p class="max-w-2xl mx-auto">Advanced phishing simulation for authorized security testing only</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-4 mb-4">
+                <a href="#" class="hover:text-white transition">Ethics Policy</a>
+                <a href="#" class="hover:text-white transition">Terms of Service</a>
+                <a href="#" class="hover:text-white transition">Privacy Policy</a>
+                <a href="#" class="hover:text-white transition">API Documentation</a>
+            </div>
+            <p class="text-sm">
+                &copy; 2023 AI-PhishBait Pro. This tool must be used in compliance with all applicable laws. 
+                Unauthorized phishing attacks are illegal.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // DOM Elements
+        const generateForm = document.getElementById('generateForm');
+        const resultContainer = document.getElementById('resultContainer');
+        const loading = document.getElementById('loading');
+        const emailContent = document.getElementById('emailContent');
+        const targetName = document.getElementById('targetName');
+        const targetHeadline = document.getElementById('targetHeadline');
+        const targetPlatform = document.getElementById('targetPlatform');
+        const tacticUsed = document.getElementById('tacticUsed');
+        const copyButton = document.getElementById('copyButton');
+        const downloadButton = document.getElementById('downloadButton');
+        const saveButton = document.getElementById('saveButton');
+        const analyzeButton = document.getElementById('analyzeButton');
+        const newButton = document.getElementById('newButton');
+        const creditsDisplay = document.getElementById('creditsDisplay');
+        const creditsCount = document.getElementById('creditsCount');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const scrapeTime = document.getElementById('scrapeTime');
+        const genTime = document.getElementById('genTime');
+        const totalTime = document.getElementById('totalTime');
+        const tacticInput = document.getElementById('social_engineering_tactic');
+        const tacticCards = document.querySelectorAll('.tactic-card');
+        const creditCounter = document.getElementById('credit-counter');
+        const creditDisplay = document.getElementById('credit-display');
+
+        // Tactics Selection
+        tacticCards.forEach(card => {
+            card.addEventListener('click', () => {
+                tacticCards.forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                tacticInput.value = card.dataset.tactic;
+            });
+        });
+
+        // Form Submission
+        generateForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const profileUrl = document.getElementById('profile_url').value;
+            const platform = document.querySelector('input[name="platform"]:checked').value;
+            const templateType = document.getElementById('template_type').value;
+            const customPrompt = document.getElementById('custom_prompt').value;
+            const tactic = tacticInput.value;
+            const apiKey = document.getElementById('api_key').value;
+            
+            // Show loading
+            loading.classList.remove('hidden');
+            resultContainer.classList.add('hidden');
+            
+            // Simulate progress
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress = Math.min(progress + Math.random() * 10, 95);
+                progressFill.style.width = `${progress}%`;
+                progressPercent.textContent = Math.floor(progress);
+            }, 500);
+            
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'api-key': apiKey
+                    },
+                    body: JSON.stringify({
+                        profile_url: profileUrl,
+                        platform: platform,
+                        template_type: templateType,
+                        social_engineering_tactic: tactic,
+                        custom_prompt: customPrompt
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Request failed');
+                }
+                
+                // Complete progress
+                progress = 100;
+                progressFill.style.width = '100%';
+                progressPercent.textContent = '100';
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                // Display results
+                emailContent.textContent = data.email;
+                targetName.textContent = data.profile_data.name || 'Not found';
+                targetHeadline.textContent = data.profile_data.headline || 'Not found';
+                targetPlatform.textContent = platform.charAt(0).toUpperCase() + platform.slice(1);
+                tacticUsed.textContent = SOCIAL_ENGINEERING_TACTICS[tactic] || 'Authority';
+                
+                // Update performance metrics
+                if (data.performance) {
+                    scrapeTime.textContent = data.performance.scrape_time;
+                    genTime.textContent = data.performance.generation_time;
+                    totalTime.textContent = data.performance.total_time;
+                }
+                
+                // Update credits
+                if (data.credits_remaining !== undefined) {
+                    creditsCount.textContent = data.credits_remaining;
+                    creditCounter.textContent = data.credits_remaining;
+                    creditDisplay.textContent = data.credits_remaining;
+                }
+                
+                // Show results
+                resultContainer.classList.remove('hidden');
+                newButton.classList.remove('hidden');
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            } finally {
+                clearInterval(progressInterval);
+                loading.classList.add('hidden');
+            }
+        });
+
+        // Copy Button
+        copyButton.addEventListener('click', () => {
+            navigator.clipboard.writeText(emailContent.textContent);
+            copyButton.innerHTML = '<i class="fas fa-check mr-1"></i> Copied!';
+            setTimeout(() => {
+                copyButton.innerHTML = '<i class="far fa-copy mr-1"></i> Copy';
+            }, 2000);
+        });
+
+        // Download Button
+        downloadButton.addEventListener('click', () => {
+            const blob = new Blob([emailContent.textContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'phishing_email.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        // Save Button
+        saveButton.addEventListener('click', () => {
+            alert('Email saved to campaign manager. This feature will allow you to organize and track multiple targets in a coordinated campaign.');
+        });
+
+        // Analyze Button
+        analyzeButton.addEventListener('click', () => {
+            alert('Effectiveness analysis launched. This feature will evaluate psychological triggers, detectability risk, and suggest improvements.');
+        });
+
+        // New Button
+        newButton.addEventListener('click', () => {
+            resultContainer.classList.add('hidden');
+            generateForm.reset();
+            newButton.classList.add('hidden');
+            tacticCards[0].classList.add('active');
+            tacticInput.value = 'authority';
+        });
+    </script>
+</body>
+</html>
